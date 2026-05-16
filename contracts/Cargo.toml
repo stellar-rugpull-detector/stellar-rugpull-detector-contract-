@@ -1,0 +1,11 @@
+[workspace]
+members = [
+    "verification-registry",
+    "community-reporting",
+    "staking-reputation",
+    "decentralized-alert-feed",
+]
+resolver = "2"
+
+[workspace.dependencies]
+soroban-sdk = { version = "22.0.0", features = ["testutils"] }

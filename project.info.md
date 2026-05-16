@@ -1,572 +1,282 @@
-Stellar Rug-Pull Detector
+# Stellar Rug-Pull Detector
 
-A real-time analytics and risk intelligence platform built on the Stellar ecosystem that scans tokens, issuers, liquidity pools, and DEX activity to detect scams, malicious tokenomics, liquidity drains, fake assets, wash trading, and centralized supply concentration before users interact with risky assets.
+> A real-time analytics and risk intelligence platform built on the Stellar ecosystem — scanning tokens, issuers, liquidity pools, and DEX activity to detect scams, malicious tokenomics, liquidity drains, fake assets, wash trading, and centralized supply concentration **before** users interact with risky assets.
 
-The platform monitors:
+---
 
-Native Stellar DEX orderbooks
-Soroban AMMs
-Token issuers
-Trustline behavior
-Liquidity movements
-Wallet concentration
-Sudden minting/burning
-Suspicious transaction graphs
-Fake verified assets
-Honeypot behavior
+## What Is This?
 
-The project acts like:
+Think of it as **TokenSniffer + RugCheck + DEXTools — built natively for Stellar**.
 
-“TokenSniffer for Stellar”
-“DEXTools + RugCheck for Stellar”
-“On-chain risk engine for Soroban DeFi”
+The Stellar ecosystem has grown significantly with Soroban smart contracts, AMMs, and cross-chain asset issuance — but security and analytics tooling remain far behind Ethereum and Solana. This project fills that gap by providing a deep on-chain risk intelligence layer for Stellar DeFi.
 
-Stellar’s ecosystem supports issued assets, trustlines, AMMs, and Soroban smart contracts, making it possible to build a deep analytics layer on top of the network.
+**Monitors in real-time:**
+- Native Stellar DEX orderbooks
+- Soroban AMMs (Soroswap, Aquarius, Phoenix)
+- Token issuers and trustline behavior
+- Liquidity movements and ownership
+- Wallet concentration and insider clusters
+- Sudden minting/burning events
+- Suspicious transaction graphs
+- Fake verified assets and honeypot behavior
 
-1. Main Goal of the Project
+---
 
-The system continuously analyzes:
+## Core Features
 
-Token distribution
-Issuer wallet activity
-Liquidity ownership
-Trading behavior
-Wash trading
-Fake volume
-Sudden liquidity removal
-Trustline manipulation
-Asset metadata
-Suspicious contract interactions
+### 🔍 Token Risk Scanner
+Analyzes supply distribution, issuer ownership, mint/freeze/burn permissions, whale concentration, and locked liquidity. Outputs a clear safety rating:
 
-Then assigns a:
+| Rating | Description |
+|---|---|
+| ✅ Safe | No significant risk indicators |
+| ⚠️ Moderate Risk | Some flags, proceed with caution |
+| 🔴 High Risk | Multiple red flags detected |
+| ☠️ Potential Rug | Active rug indicators present |
 
-Risk score
-Rug probability
-Safety rating
-Alert level
-2. Core Features
-A. Token Risk Scanner
+### 💧 Liquidity Monitoring Engine
+Tracks LP creation, withdrawals, lock duration, and sudden drains. Detects soft rugs, hard rugs, and exit liquidity setups before they execute.
 
-Analyzes:
+### 🐋 Wallet Concentration Analysis
+Flags wallets holding >50% of supply, connected insider clusters, Sybil wallets, and developer wallet dumping patterns using graph analysis.
 
-Total supply
-Circulating supply
-Issuer ownership %
-Whale concentration
-Locked liquidity %
-Mint permissions
-Freeze permissions
-Burn history
-Blacklist capabilities
+### 📊 Wash Trading Detection
+Identifies repeated buy/sell loops, same-wallet routing, volume inflation, and circular trading graphs to surface fake volume.
 
-Outputs:
+### 🎭 Fake Asset Detection
+Detects copycat asset codes (fake USDC/USDT), missing `stellar.toml`, suspicious issuer domains, and fake anchors — critical given Stellar's trustline-based asset model.
 
-Safe
-Moderate Risk
-High Risk
-Potential Rug
-B. Liquidity Monitoring Engine
+### 📈 Trustline Analytics
+Monitors rapid trustline spikes, bot-created trustlines, and mass account creation used to fake adoption metrics.
 
-Tracks:
+### 🚨 Real-Time Alert System
+Pushes alerts when liquidity drops suddenly, developers mint supply, whales dump, or suspicious contracts appear.
 
-LP creation
-LP withdrawals
-Liquidity lock duration
-Sudden liquidity drains
-Fake liquidity loops
+**Channels:** Telegram · Discord · Email · Push Notifications · WebSocket Feeds
 
-Detects:
+### 🖥️ Risk Dashboard
+Visual interface showing risk scores, holder graphs, liquidity charts, wallet heatmaps, whale activity, and rug probability.
 
-Soft rugs
-Hard rugs
-Exit liquidity setups
-C. Wallet Concentration Analysis
+---
 
-Flags:
+## Architecture
 
-Top wallets holding >50%
-Connected wallets
-Insider clusters
-Sybil wallets
-Developer wallet dumping
-D. Wash Trading Detection
+```
+┌─────────────────────┐
+│   Stellar Network   │
+│  Soroban Contracts  │
+│    Stellar DEX      │
+└──────────┬──────────┘
+           │
+┌──────────▼──────────┐
+│  Blockchain Indexer │
+│   Horizon Scanner   │
+│   Event Streamer    │
+└──────────┬──────────┘
+           │
+  ┌────────┼────────┐
+  ▼        ▼        ▼
+Risk     ML/AI    Graph
+Engine  Detect   Engine
+  └────────┼────────┘
+           ▼
+    Scoring Service
+    Rug Probability
+           ▼
+   REST + GraphQL API
+    WebSocket Streams
+           ▼
+   Frontend Dashboard
+   Alerts + Analytics
+```
 
-Uses:
+---
 
-Repeated buy/sell loops
-Same-wallet routing
-Volume inflation detection
-Circular trading graphs
-E. Fake Asset Detection
+## Tech Stack
 
-Detects:
+| Layer | Technology |
+|---|---|
+| Blockchain | Stellar + Soroban |
+| Smart Contracts | Rust |
+| Backend | NestJS / FastAPI |
+| ML / AI | Python (Isolation Forest, XGBoost, GNNs) |
+| Graph Analysis | Neo4j |
+| Analytics DB | ClickHouse |
+| Primary DB | PostgreSQL |
+| Cache | Redis |
+| Streaming | Kafka / Redpanda |
+| Frontend | Next.js + Tailwind + Recharts |
+| Wallet | Freighter |
+| Infrastructure | Kubernetes + Terraform |
 
-Copycat asset codes
-Fake USDC/USDT assets
-Fake anchors
-Missing stellar.toml
-Suspicious issuer domains
+---
 
-Stellar already uses trustline and asset issuer models which make issuer analysis very important.
+## Smart Contracts (Soroban)
 
-F. Trustline Analytics
+| Contract | Purpose |
+|---|---|
+| `verification-registry` | Stores verified assets, approved issuers, reputation scores |
+| `community-reporting` | Scam reports, community voting, DAO moderation |
+| `staking-reputation` | Users stake tokens to validate assets, earn rewards, penalize false reports |
+| `decentralized-alert-feed` | On-chain alert publishing for trustless risk data |
 
-Monitors:
+---
 
-Rapid trustline spikes
-Bot-created trustlines
-Mass account creation
-Fake adoption metrics
+## Risk Scoring Model
 
-Large-scale fake trustline activity has existed historically on Stellar.
+Each asset receives a composite risk score weighted across:
 
-G. Real-Time Alert System
+| Factor | Weight |
+|---|---|
+| Issuer concentration | 25% |
+| LP ownership | 20% |
+| Wallet clustering | 15% |
+| Sudden minting | 15% |
+| Wash trading | 10% |
+| Trustline manipulation | 10% |
+| Fake metadata | 5% |
 
-Alerts users when:
+---
 
-Liquidity drops suddenly
-Developers mint more supply
-Whale wallets dump
-Token ownership centralizes
-Suspicious contracts appear
+## Project Structure
 
-Channels:
-
-Telegram
-Discord
-Email
-Push notifications
-WebSocket feeds
-H. Risk Dashboard
-
-Shows:
-
-Risk score
-Holder graph
-Liquidity graph
-Wallet heatmaps
-Whale activity
-Rug probability
-3. Suggested Architecture
-                ┌─────────────────────┐
-                │ Stellar Network     │
-                │ Soroban Contracts   │
-                │ Stellar DEX         │
-                └──────────┬──────────┘
-                           │
-                ┌──────────▼──────────┐
-                │ Blockchain Indexer  │
-                │ Horizon Scanner     │
-                │ Event Streamer      │
-                └──────────┬──────────┘
-                           │
-        ┌──────────────────┼──────────────────┐
-        ▼                  ▼                  ▼
-┌──────────────┐  ┌────────────────┐  ┌──────────────┐
-│ Risk Engine  │  │ ML Detection   │  │ Graph Engine │
-│ Heuristics   │  │ Pattern AI     │  │ Wallet Links │
-└──────┬───────┘  └────────┬───────┘  └──────┬───────┘
-       │                   │                 │
-       └───────────────────┼─────────────────┘
-                           ▼
-                 ┌──────────────────┐
-                 │ Scoring Service  │
-                 │ Rug Probability  │
-                 └────────┬─────────┘
-                          ▼
-              ┌──────────────────────┐
-              │ REST + GraphQL API   │
-              │ WebSocket Streams    │
-              └──────────┬───────────┘
-                         ▼
-        ┌────────────────────────────────┐
-        │ Frontend Dashboard              │
-        │ Alerts + Analytics UI           │
-        └────────────────────────────────┘
-4. Complete Project Folder Structure
-Monorepo Structure
+```
 stellar-rugpull-detector/
-│
 ├── apps/
-│   ├── frontend-dashboard/
-│   ├── admin-panel/
-│   ├── mobile-alert-app/
-│   └── browser-extension/
+│   ├── frontend-dashboard/       # Next.js risk dashboard
+│   ├── admin-panel/              # Internal moderation tools
+│   ├── mobile-alert-app/         # React Native push alerts
+│   └── browser-extension/        # Freighter/StellarX warning overlay
 │
 ├── services/
-│   ├── stellar-indexer/
-│   ├── soroban-event-listener/
-│   ├── risk-engine/
-│   ├── wallet-clustering-engine/
-│   ├── liquidity-monitor/
-│   ├── ml-anomaly-engine/
-│   ├── notification-service/
-│   ├── scoring-service/
-│   ├── asset-metadata-parser/
-│   └── api-gateway/
+│   ├── stellar-indexer/          # Horizon + RPC event ingestion
+│   ├── soroban-event-listener/   # Soroban contract event streaming
+│   ├── risk-engine/              # Core heuristic scoring
+│   ├── wallet-clustering-engine/ # Neo4j graph analysis
+│   ├── liquidity-monitor/        # LP tracking and drain detection
+│   ├── ml-anomaly-engine/        # Python ML models
+│   ├── notification-service/     # Telegram, Discord, email alerts
+│   ├── scoring-service/          # Aggregated rug probability
+│   ├── asset-metadata-parser/    # stellar.toml + issuer validation
+│   └── api-gateway/              # REST + GraphQL + WebSocket API
 │
-├── contracts/
-│   ├── verification-registry/
-│   ├── community-reporting/
-│   ├── staking-reputation/
-│   └── decentralized-alert-feed/
-│
-├── infrastructure/
-│   ├── docker/
-│   ├── kubernetes/
-│   ├── terraform/
-│   ├── monitoring/
-│   └── nginx/
-│
-├── databases/
-│   ├── postgres/
-│   ├── redis/
-│   ├── clickhouse/
-│   └── neo4j/
-│
-├── shared/
-│   ├── sdk/
-│   ├── ui-components/
-│   ├── types/
-│   └── utils/
-│
+├── contracts/                    # Soroban smart contracts (Rust)
+├── infrastructure/               # Docker, Kubernetes, Terraform, Nginx
+├── databases/                    # Schema and migrations
+├── shared/                       # SDK, UI components, types, utils
 ├── docs/
 ├── scripts/
-├── tests/
-└── README.md
-5. Backend Architecture
-Recommended Stack
-Layer	Tech
-Runtime	Node.js / Rust
-API	NestJS / FastAPI
-Indexing	Stellar SDK
-Streaming	Kafka
-ML	Python
-Graph Analysis	Neo4j
-Database	PostgreSQL
-Caching	Redis
-Analytics	ClickHouse
-Deployment	Kubernetes
-6. Stellar Indexer Service
-Responsibilities
+└── tests/
+```
 
-Scans:
+---
 
-Payments
-Offers
-Trades
-Trustlines
-AMM pools
-Soroban events
+## API Reference
 
-Consumes:
+**REST**
+```
+GET  /tokens
+GET  /token/:id
+GET  /wallet/:address
+GET  /alerts
+GET  /risk-score/:asset
+GET  /liquidity/:pool
+```
 
-Horizon API
-RPC nodes
-Soroban events
-
-Stores:
-
-Wallet activity
-Token history
-Liquidity snapshots
-7. Risk Engine
-
-Core service.
-
-Risk Factors
-Metric	Weight
-Issuer concentration	25%
-LP ownership	20%
-Wallet clustering	15%
-Sudden minting	15%
-Wash trading	10%
-Trustline manipulation	10%
-Fake metadata	5%
-8. Wallet Clustering Engine
-
-Uses graph analysis to find:
-
-Developer-controlled wallets
-Insider networks
-Wash trading loops
-Sybil attacks
-
-Database:
-
-Neo4j
-9. ML/AI Detection Layer
-
-Models:
-
-Isolation Forest
-XGBoost
-Autoencoders
-Graph Neural Networks
-
-Detects:
-
-Abnormal trading
-Liquidity drains
-Bot patterns
-Coordinated dumping
-10. Smart Contracts (Soroban)
-A. Verification Registry
-
-Stores:
-
-Verified assets
-Community-approved issuers
-Reputation scores
-B. Community Reporting Contract
-
-Allows:
-
-Scam reports
-Voting
-DAO moderation
-C. Staking Reputation Contract
-
-Users stake tokens to:
-
-Validate assets
-Earn rewards
-Penalize false reports
-11. Frontend Dashboard
-Recommended Stack
-Layer	Tech
-Frontend	Next.js
-Charts	Recharts
-State	Zustand
-Wallet	Freighter
-Styling	Tailwind
-Real-time	WebSockets
-12. Dashboard Pages
-Public Pages
-/
- /explore
- /tokens
- /token/[asset]
- /issuers
- /wallets
- /alerts
- /leaderboard
- /analytics
-Admin Pages
-/admin
-/admin/reports
-/admin/risk-rules
-/admin/moderation
-13. Token Detail Page
-
-Displays:
-
-Risk score
-Liquidity lock
-Holder distribution
-Whale wallets
-Volume authenticity
-Rug indicators
-Trade activity
-Trustline growth
-14. Databases
-PostgreSQL
-
-Stores:
-
-Assets
-Wallets
-Trades
-Reports
-Redis
-
-Stores:
-
-Live alerts
-Cache
-Sessions
-ClickHouse
-
-Stores:
-
-Massive analytics
-Historical candles
-DEX metrics
-Neo4j
-
-Stores:
-
-Wallet relationships
-Trade graphs
-Insider clusters
-15. Real-Time Streaming System
-
-Use:
-
-Kafka
-Redpanda
-RabbitMQ
-
-Pipelines:
-
-Stellar Stream
-   ↓
-Indexer
-   ↓
-Risk Queue
-   ↓
-Detection Engine
-   ↓
-Alert System
-16. APIs
-REST Endpoints
-GET /tokens
-GET /token/:id
-GET /wallet/:address
-GET /alerts
-GET /risk-score/:asset
-GET /liquidity/:pool
-WebSocket Streams
+**WebSocket Streams**
+```
 /ws/alerts
 /ws/liquidity
 /ws/trades
 /ws/risk-updates
-17. Browser Extension
+```
 
-Features:
+---
 
-Warn users before swaps
-Detect risky assets
-Show rug score
-Highlight fake tokens
+## Dashboard Pages
 
-Supports:
+**Public**
+```
+/                  Landing + live risk feed
+/explore           Browse all tracked assets
+/tokens            Token list with risk scores
+/token/[asset]     Full token risk detail page
+/issuers           Issuer reputation profiles
+/wallets           Wallet risk lookup
+/alerts            Live alert stream
+/leaderboard       Safest / riskiest assets
+/analytics         Ecosystem-wide analytics
+```
 
-Freighter wallet
-StellarX
-Soroswap
-18. Mobile App
+**Admin**
+```
+/admin             Overview
+/admin/reports     Community scam reports
+/admin/risk-rules  Heuristic rule management
+/admin/moderation  DAO voting queue
+```
 
-Features:
+---
 
-Push alerts
-Whale notifications
-Portfolio risk
-Scam warnings
+## Development Roadmap
 
-Tech:
+| Phase | Deliverables |
+|---|---|
+| **Phase 1** | Stellar indexer, basic risk engine, dashboard MVP |
+| **Phase 2** | Liquidity monitoring, whale tracking, alert system |
+| **Phase 3** | ML anomaly detection, wallet clustering, community reporting |
+| **Phase 4** | DAO governance, reputation staking, browser extension |
 
-React Native
-19. Revenue Model
-Freemium
-Basic risk scans free
-Advanced analytics paid
-API Subscription
+### Suggested MVP (Start Here)
+1. Stellar transaction indexer (Horizon + Soroban events)
+2. Token risk scoring engine
+3. Liquidity monitoring
+4. Wallet concentration analysis
+5. Web dashboard
+6. Alert system
 
-Sell:
+---
 
-Risk feeds
-Wallet analytics
-DEX intelligence
-Institutional Dashboard
+## Advanced Features
 
-For:
+- **AI Rug Probability** — Predict rugs before they happen using historical pattern models
+- **Social Sentiment Analysis** — Telegram, X/Twitter, Discord signal aggregation
+- **Cross-DEX Monitoring** — Unified view across Soroswap, Aquarius, and Phoenix
+- **Browser Extension** — Warns users before swaps, highlights risky assets inline in Freighter and StellarX
+- **Mobile App** — Push alerts for whale moves, portfolio risk, and scam warnings
 
-Exchanges
-Funds
-Compliance teams
-Token Listing Audits
+---
 
-Paid audits for projects.
+## Revenue Model
 
-20. Development Phases
-Phase 1
-Stellar indexer
-Basic risk engine
-Dashboard MVP
-Phase 2
-Liquidity monitoring
-Whale tracking
-Alerts
-Phase 3
-ML anomaly detection
-Wallet clustering
-Community reporting
-Phase 4
-DAO governance
-Reputation staking
-Browser extension
-21. Suggested MVP
+| Tier | Description |
+|---|---|
+| **Free** | Basic risk scans, public dashboard |
+| **API Subscription** | Risk feeds, wallet analytics, DEX intelligence |
+| **Institutional** | Full analytics suite for exchanges, funds, compliance teams |
+| **Token Audits** | Paid on-chain audits for project launches |
 
-Build first:
+---
 
-Stellar transaction indexer
-Token risk scoring
-Liquidity monitoring
-Wallet concentration analysis
-Web dashboard
-Alert system
-22. Recommended Tech Stack
-Component	Stack
-Blockchain	Stellar + Soroban
-Smart Contracts	Rust
-Frontend	Next.js
-Backend	NestJS
-ML	Python
-Graph DB	Neo4j
-Analytics	ClickHouse
-Queue	Kafka
-Infra	Kubernetes
-23. Advanced Features
-AI Rug Probability
+## Security Considerations
 
-Predict rugs before they happen.
+- Rate limiting on all public endpoints
+- Multi-node validation to prevent oracle spoofing
+- Reputation systems to penalize fake reports
+- Signed data feeds for tamper-proof risk scores
+- Sybil-resistant voting via staking
 
-Social Sentiment
+---
 
-Analyze:
+## Why This Matters
 
-Telegram
-X/Twitter
-Discord
-Cross-DEX Monitoring
+Stellar's DeFi ecosystem is expanding rapidly with Soroban, AMMs, and cross-chain asset issuance — but security tooling is still nascent compared to Ethereum or Solana. This project aims to become:
 
-Track:
+- The **primary security layer** for Stellar DeFi
+- A **risk oracle** for wallets and DEXs
+- An **institutional analytics platform** for compliance and due diligence
+- A **community-owned** scam detection network via DAO governance
 
-Soroswap
-Aquarius
-Phoenix
+---
 
-Community discussions around Soroban DEX infrastructure and liquidity ecosystems show increasing DeFi activity on Stellar.
 
-24. Security Considerations
-Prevent:
-Fake risk manipulation
-Oracle spoofing
-Spam reports
-Sybil voting
-DDoS attacks
-
-Use:
-
-Rate limiting
-Multi-node validation
-Reputation systems
-Signed data feeds
-25. Why This Project Is Valuable
-
-The Stellar ecosystem is growing with:
-
-Soroban DeFi
-AMMs
-Token issuance
-Cross-chain assets
-
-Analytics and security tooling are still underdeveloped compared to Ethereum/Solana ecosystems.
-
-This project could become:
-
-The primary security layer for Stellar DeFi
-A risk oracle for wallets and DEXs
-An institutional analytics platform
-A compliance intelligence provider
